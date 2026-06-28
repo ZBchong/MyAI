@@ -1,3 +1,7 @@
-display_name: Douyin/Xiaohongshu Video Producer
-short_description: Turn raw素材 into branded short-video packages.
-default_prompt: 根据我提供的视频素材，生成一套可发布到抖音和小红书的成片、封面、文案、口播稿、字幕和完整提示词模板。
+interface:
+  display_name: "Douyin/Xiaohongshu Video Producer"
+  short_description: "Generate Episode-5-style AI tool videos, then prepare Douyin upload after approval."
+  default_prompt: "Use $douyin-xiaohongshu-video-producer to analyze my screen recording, generate the shared Douyin/Xiaohongshu delivery package in the approved Episode 5 dark spark proof-layout style, list all delivery files, and wait for my confirmation before preparing the Douyin upload."
+
+policy:
+  allow_implicit_invocation: true
