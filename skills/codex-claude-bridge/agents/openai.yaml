@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Claude Bridge"
+  short_description: "一键配置 Claude Code 使用 Codex"
+  default_prompt: "Use $codex-claude-bridge to configure Claude Code to use Codex through CLIProxyAPI."
