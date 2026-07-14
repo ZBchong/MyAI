@@ -79,12 +79,12 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
    - Optionally also render a no-subtitle preview as `本期成片.mp4` when useful.
 
 8. Create publishing assets.
-   - Generate a strong cover image matching the video style, normally `发布封面.png` in the episode folder.
+   - Generate both cover orientations for every episode unless the user explicitly opts out: a horizontal `1920x1080` cover at `发布封面.png` and a vertical `1080x1920` cover at `发布封面_竖版.png` in the episode folder. The default video itself remains horizontal unless the user requests a vertical video.
    - Prefer deriving the cover from the Remotion composition with a Still or selected frame, then refine layout/text if needed.
    - Default to a high-impact, futuristic technology aesthetic: dark depth, controlled neon glow, dynamic grid/lines, layered UI or code imagery, and one dominant focal point. Do not deliver a generic presentation-slide cover.
    - Make the topic and viewer benefit understandable within one second. Lead with one short, direct hook in no more than two title lines, then use at most one compact proof/curiosity badge such as a star count, time saving, or concrete capability.
    - Make the cover readable at mobile thumbnail size: very large title, high contrast, clear subject, no clutter, and safe margins. The cover should create a strong reason to keep watching without misleading clickbait or exaggerated claims.
-   - Inspect the exported cover at full size and at thumbnail scale. Reject and revise it if the title is not immediately legible, the core topic is vague, the focal point is weak, or decorative effects compete with the hook.
+   - Inspect both exported covers at full size and at thumbnail scale. Reject and revise either orientation if the title is not immediately legible, the core topic is vague, the focal point is weak, or decorative effects compete with the hook. Recompose the vertical cover for its aspect ratio instead of merely cropping the horizontal cover.
    - Write `发布文案.md` containing:
      - `抖音标题`: 20-35 Chinese characters when possible, benefit-driven and specific.
      - `发布文案`: 1-3 short paragraphs, natural creator voice, clear promise, no exaggerated claims.
@@ -95,7 +95,7 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
 9. Final response.
    - Provide the episode folder path and final MP4 path.
    - Provide the narration audio path and subtitle path.
-   - Provide the cover image path and publish copy path.
+   - Provide both the horizontal and vertical cover image paths, plus the publish copy path.
    - Mention the reference URL, topic, BGM used, voice provider, and voice ID.
    - Mention any verification performed.
 
@@ -122,7 +122,8 @@ Capture these traits from the reference before coding:
 - Subtitles: `字幕.srt` in the episode folder.
 - Final subtitled video: `字幕版成片.mp4` in the episode folder.
 - Optional no-subtitle video: `本期成片.mp4`.
-- Cover image: `发布封面.png` in the episode folder.
+- Horizontal cover image: `发布封面.png` (`1920x1080`) in the episode folder.
+- Vertical cover image: `发布封面_竖版.png` (`1080x1920`) in the episode folder.
 - Publishing text: `发布文案.md` in the episode folder.
 
 ## Notes
