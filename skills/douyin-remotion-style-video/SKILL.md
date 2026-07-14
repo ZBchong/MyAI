@@ -33,6 +33,7 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
    - Prefer, in order: a safe crop that preserves the focal UI; a Remotion mask/cover integrated into the composition; a localized repair only when the surrounding background is simple and the result can be verified.
    - Keep the original recording unchanged. Save a processed copy as `public/source-recording-clean.mp4`, or record the non-destructive mask coordinates in `episode.json` when masking in Remotion.
    - Inspect at least three processed frames. Reject the result if it clips important UI, cursor actions, titles, or browser controls, or if the repair flickers. Fall back to a branded cover badge or the unchanged source and report the limitation.
+   - When using a branded mask or cover badge over an authorized export watermark, use the text `阿牛不加班` by default. Replace it only when the user explicitly supplies different brand text.
 
 3. Prepare the episode folder.
    - Run `scripts/New-DouyinRemotionEpisode.ps1` from this skill.
