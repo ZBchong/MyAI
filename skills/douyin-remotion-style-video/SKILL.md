@@ -81,7 +81,10 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
 8. Create publishing assets.
    - Generate a strong cover image matching the video style, normally `发布封面.png` in the episode folder.
    - Prefer deriving the cover from the Remotion composition with a Still or selected frame, then refine layout/text if needed.
-   - Make the cover readable at mobile thumbnail size: one short title, high contrast, clear subject, no clutter.
+   - Default to a high-impact, futuristic technology aesthetic: dark depth, controlled neon glow, dynamic grid/lines, layered UI or code imagery, and one dominant focal point. Do not deliver a generic presentation-slide cover.
+   - Make the topic and viewer benefit understandable within one second. Lead with one short, direct hook in no more than two title lines, then use at most one compact proof/curiosity badge such as a star count, time saving, or concrete capability.
+   - Make the cover readable at mobile thumbnail size: very large title, high contrast, clear subject, no clutter, and safe margins. The cover should create a strong reason to keep watching without misleading clickbait or exaggerated claims.
+   - Inspect the exported cover at full size and at thumbnail scale. Reject and revise it if the title is not immediately legible, the core topic is vague, the focal point is weak, or decorative effects compete with the hook.
    - Write `发布文案.md` containing:
      - `抖音标题`: 20-35 Chinese characters when possible, benefit-driven and specific.
      - `发布文案`: 1-3 short paragraphs, natural creator voice, clear promise, no exaggerated claims.
