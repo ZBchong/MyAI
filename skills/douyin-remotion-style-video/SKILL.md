@@ -1,11 +1,11 @@
 ---
 name: douyin-remotion-style-video
-description: Create Douyin-style Remotion videos and publishing assets from a Douyin reference link, a requested episode topic, and an optional background music file. Use when the user asks Codex to imitate or learn a Douyin video's visual style and automatically generate a new topic video with Remotion, plus a good cover image, Douyin title, and publish copy, storing each episode under D:\6.AI\自媒体\AI用法 as 第一期, 第二期, 第三期, etc. If no background music is specified, use D:\6.AI\自媒体\背景音乐_洪荒之力.MOV.
+description: Create Douyin-style Remotion videos, Yunxi voiceover, automatic subtitles, and publishing assets from a Douyin reference link, a requested episode topic, and an optional background music file. Use when the user asks Codex to imitate or learn a Douyin video's visual style and automatically generate a new topic video with Remotion, including Microsoft Edge TTS zh-CN-YunxiNeural narration from the douyin-xiaohongshu-video-producer skill, visible subtitles, a cover image, Douyin title, and publish copy, storing each episode under D:\6.AI\自媒体\AI用法 as 第一期, 第二期, 第三期, etc. If no background music is specified, use D:\6.AI\自媒体\背景音乐_洪荒之力.MOV.
 ---
 
 # Douyin Remotion Style Video
 
-Use this skill to turn a Douyin reference video into a reusable Remotion-style episode: analyze the reference, create a new numbered episode folder, generate the Remotion project/content for the user's topic, apply the requested or default BGM, render the final video, create a cover image, draft Douyin publishing text, and report the output paths.
+Use this skill to turn a Douyin reference video into a reusable Remotion-style episode: analyze the reference, create a new numbered episode folder, generate Remotion content for the user's topic, apply the requested or default BGM, generate Yunxi voiceover, create synchronized subtitles, render the subtitled final video, create a cover image, draft Douyin publishing text, and report the output paths.
 
 ## Inputs
 
@@ -14,6 +14,7 @@ Require or infer:
 - `reference_url`: a Douyin video URL or current in-app browser Douyin page.
 - `topic`: the user's requested creative theme/content for this episode.
 - `music_path`: optional. If omitted, use `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`.
+- `voice`: default to Microsoft Edge TTS `zh-CN-YunxiNeural`, copied/referenced from `D:\Code\AiCoding\MyAI\skills\douyin-xiaohongshu-video-producer-1.0.0\assets\audio`.
 
 Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly overrides it.
 
@@ -26,9 +27,11 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
 
 2. Prepare the episode folder.
    - Run `scripts/New-DouyinRemotionEpisode.ps1` from this skill.
-   - Pass `-ReferenceUrl`, `-Topic`, and optional `-MusicPath`.
+   - Pass `-ReferenceUrl`, `-Topic`, optional `-MusicPath`, and optional `-VoiceSkillPath`.
    - The script creates the next folder under `D:\6.AI\自媒体\AI用法`, such as `第二期`, `第三期`, then creates `remotion_project\public`.
-   - It copies the BGM into `public\episode-bgm` with the original extension and writes `episode.json`.
+   - It copies the BGM into `public\episode-bgm` with the original extension.
+   - It copies Yunxi voice sample files and `audio-manifest.json` from the Xiaohongshu/Douyin producer skill when available.
+   - It writes `episode.json` with final video, voiceover, subtitle, cover, and publish-copy paths.
 
 3. Use Remotion.
    - Load the Remotion best-practices skill if available.
@@ -42,13 +45,23 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
    - Do not copy copyrighted media from the Douyin source. Recreate the style with original UI/graphics, generated-safe visuals, or local assets.
    - Use the copied BGM via Remotion `staticFile()`.
 
-5. Validate and render.
+5. Generate voiceover and subtitles.
+   - Read `references/voiceover-subtitles.md`.
+   - Write a concise narration script for every scene.
+   - Generate `旁白音频.webm` with Microsoft Edge TTS `zh-CN-YunxiNeural`, rate `+0%`, pitch `+0Hz`, volume `+0%`.
+   - Generate `字幕.srt` automatically from the narration/scene timings.
+   - Add visible subtitles to the Remotion composition in the lower safe area above the progress bar.
+   - Add narration audio to the composition and keep BGM low enough for speech clarity.
+   - If TTS generation fails, stop and report the blocker; do not silently deliver a non-voiceover video.
+
+6. Validate and render.
    - Run lint/type checks when available.
    - Render 2-3 still frames first: opening, middle, ending.
-   - Inspect frames for text overflow, blank canvases, incoherent overlap, and BGM reference errors.
-   - Render the MP4 into the episode folder, normally as `本期成片.mp4` or a clear topic-specific filename.
+   - Inspect frames for text overflow, blank canvases, incoherent overlap, BGM reference errors, narration reference errors, and subtitle overlap.
+   - Render the MP4 into the episode folder, normally as `字幕版成片.mp4`.
+   - Optionally also render a no-subtitle preview as `本期成片.mp4` when useful.
 
-6. Create publishing assets.
+7. Create publishing assets.
    - Generate a strong cover image matching the video style, normally `发布封面.png` in the episode folder.
    - Prefer deriving the cover from the Remotion composition with a Still or selected frame, then refine layout/text if needed.
    - Make the cover readable at mobile thumbnail size: one short title, high contrast, clear subject, no clutter.
@@ -57,11 +70,13 @@ Use `D:\6.AI\自媒体\AI用法` as the episode root unless the user explicitly 
      - `发布文案`: 1-3 short paragraphs, natural creator voice, clear promise, no exaggerated claims.
      - `话题标签`: 5-8 relevant hashtags.
      - `封面文案`: exact text used on the cover.
+     - Voice and BGM notes.
 
-7. Final response.
+8. Final response.
    - Provide the episode folder path and final MP4 path.
+   - Provide the narration audio path and subtitle path.
    - Provide the cover image path and publish copy path.
-   - Mention the reference URL, topic, and BGM used.
+   - Mention the reference URL, topic, BGM used, voice provider, and voice ID.
    - Mention any verification performed.
 
 ## Style Extraction Checklist
@@ -82,13 +97,19 @@ Capture these traits from the reference before coding:
 - Remotion project: `D:\6.AI\自媒体\AI用法\第N期\remotion_project`.
 - Metadata: `episode.json`.
 - Copied BGM: `remotion_project\public\episode-bgm.<ext>`.
-- Final video: keep inside the episode folder, not only inside the project build folder.
+- Copied voice samples: `remotion_project\public\voice-yunxi-sample.webm`, `voice-yunxi-sample.wav`, `audio-manifest.json`.
+- Narration audio: `旁白音频.webm` in the episode folder.
+- Subtitles: `字幕.srt` in the episode folder.
+- Final subtitled video: `字幕版成片.mp4` in the episode folder.
+- Optional no-subtitle video: `本期成片.mp4`.
 - Cover image: `发布封面.png` in the episode folder.
 - Publishing text: `发布文案.md` in the episode folder.
 
 ## Notes
 
 - Prefer original synthesized/generative visuals and local screenshots/assets over copying Douyin media.
-- If the user supplies a BGM path, use it. If they says "用默认背景音乐" or gives no BGM, use `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`.
+- If the user supplies a BGM path, use it. If they say "用默认背景音乐" or give no BGM, use `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`.
 - If the BGM is a video container such as `.MOV`, it is acceptable to reference it as an audio source in Remotion if Chromium can decode it; otherwise convert or extract audio with available local tooling.
+- Always use the Yunxi voice unless the user explicitly provides another voice or recording.
+- Always configure visible subtitles and generate `字幕.srt`.
 - Keep each episode self-contained so it can be reopened later.

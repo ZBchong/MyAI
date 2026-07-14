@@ -7,7 +7,9 @@ param(
 
   [string]$MusicPath = "",
 
-  [string]$EpisodeRoot = ""
+  [string]$EpisodeRoot = "",
+
+  [string]$VoiceSkillPath = "D:\Code\AiCoding\MyAI\skills\douyin-xiaohongshu-video-producer-1.0.0"
 )
 
 $ErrorActionPreference = "Stop"
@@ -112,9 +114,25 @@ $musicExt = [IO.Path]::GetExtension($MusicPath)
 $musicDestName = "episode-bgm$musicExt"
 $musicDest = Join-Path $publicDir $musicDestName
 Copy-Item -LiteralPath $MusicPath -Destination $musicDest -Force
+$voiceDir = Join-Path $VoiceSkillPath "assets\audio"
+$voiceManifest = Join-Path $voiceDir "audio-manifest.json"
+$voiceSampleWebm = Join-Path $voiceDir "voice-yunxi-sample.webm"
+$voiceSampleWav = Join-Path $voiceDir "voice-yunxi-sample.wav"
+if (Test-Path -LiteralPath $voiceManifest) {
+  Copy-Item -LiteralPath $voiceManifest -Destination (Join-Path $publicDir "audio-manifest.json") -Force
+}
+if (Test-Path -LiteralPath $voiceSampleWebm) {
+  Copy-Item -LiteralPath $voiceSampleWebm -Destination (Join-Path $publicDir "voice-yunxi-sample.webm") -Force
+}
+if (Test-Path -LiteralPath $voiceSampleWav) {
+  Copy-Item -LiteralPath $voiceSampleWav -Destination (Join-Path $publicDir "voice-yunxi-sample.wav") -Force
+}
 $finalVideoPath = Join-Path $episodeDir (U @(0x672C, 0x671F, 0x6210, 0x7247, 0x002E, 0x006D, 0x0070, 0x0034))
 $coverPath = Join-Path $episodeDir (U @(0x53D1, 0x5E03, 0x5C01, 0x9762, 0x002E, 0x0070, 0x006E, 0x0067))
 $publishCopyPath = Join-Path $episodeDir (U @(0x53D1, 0x5E03, 0x6587, 0x6848, 0x002E, 0x006D, 0x0064))
+$narrationPath = Join-Path $episodeDir (U @(0x65C1, 0x767D, 0x97F3, 0x9891, 0x002E, 0x0077, 0x0065, 0x0062, 0x006D))
+$subtitlePath = Join-Path $episodeDir (U @(0x5B57, 0x5E55, 0x002E, 0x0073, 0x0072, 0x0074))
+$subtitledVideoPath = Join-Path $episodeDir (U @(0x5B57, 0x5E55, 0x7248, 0x6210, 0x7247, 0x002E, 0x006D, 0x0070, 0x0034))
 
 $metadata = [ordered]@{
   episode_number = $next
@@ -124,7 +142,17 @@ $metadata = [ordered]@{
   source_music_path = $MusicPath
   project_dir = $projectDir
   public_music_file = $musicDestName
+  voice_provider = "Microsoft Edge TTS"
+  voice_id = "zh-CN-YunxiNeural"
+  voice_rate = "+0%"
+  voice_pitch = "+0Hz"
+  voice_volume = "+0%"
+  voice_sample_webm = "voice-yunxi-sample.webm"
+  voice_sample_wav = "voice-yunxi-sample.wav"
+  narration_audio_path = $narrationPath
+  subtitle_path = $subtitlePath
   final_video_path = $finalVideoPath
+  subtitled_video_path = $subtitledVideoPath
   cover_path = $coverPath
   publish_copy_path = $publishCopyPath
   created_at = (Get-Date).ToString("s")
@@ -139,7 +167,10 @@ $metadata | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $metadataPath -En
   publicDir = $publicDir
   metadataPath = $metadataPath
   musicFile = $musicDest
+  narrationAudioPath = $narrationPath
+  subtitlePath = $subtitlePath
   finalVideoPath = $finalVideoPath
+  subtitledVideoPath = $subtitledVideoPath
   coverPath = $coverPath
   publishCopyPath = $publishCopyPath
 } | ConvertTo-Json -Depth 5

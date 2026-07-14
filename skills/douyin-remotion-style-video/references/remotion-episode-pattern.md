@@ -12,6 +12,7 @@ Use this pattern for Douyin-style knowledge/workflow videos:
 5. Render final MP4 into the episode folder.
 6. Render or create a cover image as `发布封面.png`.
 7. Write Douyin publish assets as `发布文案.md`.
+8. Generate narration with `zh-CN-YunxiNeural`, write `字幕.srt`, and render `字幕版成片.mp4`.
 
 Recommended 78-second structure:
 
@@ -32,6 +33,8 @@ For the reference style used in this user's examples, prefer:
 - cyan/blue/amber/red accents;
 - slow slide/zoom motion and chapter flashes;
 - no copied Douyin video or music.
+- default narration voice: Microsoft Edge TTS `zh-CN-YunxiNeural`.
+- visible subtitles in the lower safe area, above the progress bar.
 
 Publishing asset pattern:
 
