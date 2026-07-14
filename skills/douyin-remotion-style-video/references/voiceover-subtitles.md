@@ -39,6 +39,8 @@ Rules:
 - Prefer short spoken sentences.
 - Match narration to the current visual scene.
 - Do not read long prompt examples verbatim unless they are the point of the scene.
+- Focus on the core purpose, strongest differentiators, and practical value; remove secondary facts before increasing duration.
+- Match the narration duration to the source recording, normally within `±10%`. After generating TTS, measure the actual audio and rewrite until it fits instead of extending the video or replaying footage.
 
 ## TTS Generation
 
@@ -50,13 +52,29 @@ Recommended behavior:
 2. Save it as `旁白音频.webm`.
 3. Record the exact voice parameters in `episode.json` and `发布文案.md`.
 
+Additionally, enable sentence and word boundary metadata when generating narration. Save the actual boundary timestamps as JSON next to the audio, measure the resulting audio duration, and rewrite/regenerate when it falls outside the source-duration target. Record the measured duration in `episode.json`.
+
 If TTS fails because network or the package is unavailable, stop and report the blocker instead of rendering a silent final video.
 
 ## Subtitle Timing
 
-Create `字幕.srt` automatically from the narration plan.
+Create `字幕.srt` from the generated narration's actual sentence/word boundary timestamps.
 
-Use chapter timings from the Remotion scene data as the first timing source. Then split each chapter's narration into short subtitle cues and distribute the cue timings within the chapter. Keep subtitle cue boundaries aligned with scene changes when possible.
+- Group consecutive boundary tokens into readable 12-22-character cues.
+- Use the first spoken token as cue start and the last spoken token as cue end, with at most a small readability pad that does not overlap the next phrase.
+- Align scene changes to the audio-derived cues when practical; never replace audio timestamps with evenly distributed chapter timings.
+- If boundary metadata is unavailable, generate TTS cue by cue and concatenate using a timestamp manifest, or run forced alignment. Do not guess timings from text length alone.
+- Keep a JSON caption source using the Remotion `Caption` type, then export the same timestamps to SRT.
+
+## Synchronization Validation
+
+Before final rendering:
+
+1. Compare the caption transcript with the narration script and reject missing, duplicated, or reordered phrases.
+2. Check cue timestamps against the audio at the opening, middle, ending, and every scene boundary.
+3. Keep normal onset and removal error within `250ms`; reject progressive drift above `300ms`.
+4. Preview at normal speed and `0.5x`. Regenerate timing if captions lead speech, lag speech, or remain visible into the next phrase.
+5. Record the validation result and maximum observed drift in `episode.json`.
 
 SRT format:
 
