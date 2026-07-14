@@ -21,6 +21,8 @@ When the user provides only a screen recording, automatically use this skill. Tr
 
 Before every Stage 1 generation, read `references/episode5-final-template.md` and treat it as the latest production contract. The user should not need to repeat Episode 5 style requirements again.
 
+Before every Stage 1 generation, also read `references/audio-reproducibility.md`. Use the packaged default audio assets in `assets/audio/` so another computer can reproduce the same BGM choice and the same default TTS voice settings after installing the skill.
+
 This is a two-stage workflow:
 
 1. Stage 1: generate the video delivery package and list every delivery file in the conversation.
@@ -145,9 +147,9 @@ Mandatory Episode-4 screen-recording style:
 - Do not over-explain concepts before the demo. Get to the real operation quickly.
 - Avoid unsupported claims. For financial topics, do not imply guaranteed profits, recommendations, or predictions; present the tool as information organization and risk review.
 - If the user provides a voice recording, use it as the primary voice.
-- If no voice is provided, generate a natural temporary TTS voiceover and mark it as replaceable in the delivery docs.
-- Background music is now part of the default delivery. If the user provides a background-audio file for the episode, use that file first. If the user does not provide one, use `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV` by default.
-- Mix background music at low volume with fade-in/fade-out and voice ducking/sidechain compression so narration stays clear. Note the selected BGM source and mix treatment in `delivery_readme.md`.
+- If no voice is provided, generate the voiceover with Microsoft Edge TTS `zh-CN-YunxiNeural`, rate `+0%`, pitch `+0Hz`, and volume `+0%`. Use `assets/audio/voice-yunxi-sample.webm` or `assets/audio/voice-yunxi-sample.wav` as the timbre reference.
+- Background music is now part of the default delivery. If the user provides a background-audio file for the episode, use that file first. If the user does not provide one, use the packaged skill asset `assets/audio/default-bgm-honghuangzhili.m4a` by default. Only use `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV` as a legacy local fallback when the packaged asset is unavailable.
+- Mix background music at low volume with fade-in/fade-out and voice ducking/sidechain compression so narration stays clear. Note the selected BGM source, SHA256 when available, voice ID, voice sample reference, and mix treatment in `delivery_readme.md`.
 - Subtitles must match the spoken words exactly.
 - Subtitle lines must not end with Chinese or English sentence punctuation such as `。`, `！`, `？`, `.`, `!`, `?`.
 - Place subtitles above the progress bar and within the safe area. They must not sit too low or overlap UI.
@@ -171,7 +173,7 @@ If the user gives a different CTA, use the user CTA while preserving the same vi
 
 Use the bundled scripts as production guardrails:
 
-- `scripts/render_episode5_final_reference.ps1`: canonical reference render script from the approved Episode 5 delivery. For new episodes, copy it into the episode `assets/` folder and replace only episode paths, source video, BGM, card images, TTS script, and segment manifest. Preserve the hook sweep-light overlay, two-level proof-stage filter grammar, subtitle safe area, progress bar overlay, BGM ducking, stats JSON, and delivery-copy behavior unless the user explicitly changes the style.
+- `scripts/render_episode5_final_reference.ps1`: canonical reference render script from the approved Episode 5 delivery. For new episodes, copy it into the episode `assets/` folder and replace only episode paths, source video, optional user-provided BGM override, card images, TTS script, and segment manifest. Preserve the hook sweep-light overlay, two-level proof-stage filter grammar, subtitle safe area, progress bar overlay, BGM ducking, stats JSON, and delivery-copy behavior unless the user explicitly changes the style. Default BGM must resolve to the packaged skill asset `assets/audio/default-bgm-honghuangzhili.m4a` when the user does not provide audio.
 - `scripts/check_delivery.ps1`: run this after the final render with `-EpisodeDir <episode> -Strict`. Treat any error as a delivery blocker. Keep the generated QC JSON/frames under the episode `assets/` folder.
 
 When creating a custom render script for a new episode, keep it in that episode's `assets/` folder and make it equivalent to the Episode 5 final reference: same visual grammar, same final filenames, same delivery folder, same QC expectations. Do not fall back to a small screenshot-card render.
@@ -212,7 +214,7 @@ Before final response, verify:
 
 - Final video opens and has expected duration, 1080x1920 resolution, and audio stream.
 - `douyin_publish.mp4` and `xiaohongshu_publish.mp4` are byte-identical or have the same SHA256.
-- Background music is present. Verify the selected source follows this priority: user-provided episode audio first, otherwise `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`. Confirm low-volume mix, fade-in/fade-out, and voice ducking.
+- Background music is present. Verify the selected source follows this priority: user-provided episode audio first, otherwise packaged `assets/audio/default-bgm-honghuangzhili.m4a`, otherwise legacy local `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV` only if available. Confirm low-volume mix, fade-in/fade-out, and voice ducking.
 - Opening, cover, and first frame use the approved dark spark style and real tool screenshot.
 - Opening top text area has a visible left-to-right sweep-light effect in the video render, while remaining readable and without an outer frame.
 - Cover files exist: `cover.jpg` for common/vertical upload and `douyin_cover_horizontal_4x3.jpg` as a JPG horizontal 4:3 cover.
@@ -230,6 +232,7 @@ Before final response, verify:
 - `references/persona-and-style.md`: persona, tone, cover, colors, CTA.
 - `references/video-structure.md`: shot structure and screen-recording rhythm.
 - `references/episode5-final-template.md`: latest approved Episode 5 production contract and QC standard.
+- `references/audio-reproducibility.md`: default voice, voice sample, packaged BGM, hashes, and mix settings for portable installs.
 - `references/prompt-template.md`: complete prompt template schema.
 - `references/douyin-publish-flow.md`: confirmed Stage 2 Douyin upload flow.
 - `assets/style-reference/`: approved visual reference frames.

@@ -49,8 +49,11 @@ The screen-recording explanation stage must use the Episode 4/5 proof grammar:
 ## Audio Contract
 
 - If the user provides a background music file, use it.
-- If no episode BGM is provided, default to `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`.
+- If no episode BGM is provided, default to the packaged skill asset `assets/audio/default-bgm-honghuangzhili.m4a`.
+- Use legacy local `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV` only when the packaged asset is unavailable.
 - Mix BGM low with fade-in/fade-out and ducking/sidechain compression under voice.
+- If no user voice recording is provided, generate the voice with Microsoft Edge TTS `zh-CN-YunxiNeural`, rate `+0%`, pitch `+0Hz`, volume `+0%`. Use `assets/audio/voice-yunxi-sample.webm` or `assets/audio/voice-yunxi-sample.wav` as the timbre reference.
+- Read `references/audio-reproducibility.md` for the exact voice sample hashes, packaged BGM hash, and mix settings.
 
 ## Ending Contract
 
@@ -65,7 +68,7 @@ Before delivery, verify and record:
 
 - Both publish videos exist and match by SHA256.
 - Video is 1080x1920, about 30fps, and has an audio stream.
-- BGM source and ducking treatment are documented.
+- BGM source, BGM SHA256 when available, voice ID, voice sample reference, and ducking treatment are documented.
 - Opening sweep-light moves between early hook frames.
 - Bottom progress bar width increases between start, middle, and end frames.
 - Proof-stage frames match the Episode 5 reference density: upper original recording with orange tracking rectangle plus lower matching zoom.

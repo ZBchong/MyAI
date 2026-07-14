@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "default_voice": {
+    "provider": "Microsoft Edge TTS",
+    "voice": "zh-CN-YunxiNeural",
+    "rate": "+0%",
+    "pitch": "+0Hz",
+    "volume": "+0%",
+    "output_format": "WEBM_24KHZ_16BIT_MONO_OPUS",
+    "sample_webm": "assets/audio/voice-yunxi-sample.webm",
+    "sample_wav": "assets/audio/voice-yunxi-sample.wav",
+    "sample_sha256_webm": "45E5143E494837895611B06EECBA7C2B340DC725A7DD6C7EE677C48EC3681E51",
+    "sample_sha256_wav": "6BFBB92847FD47E84DA88C9002567600FCE2D3AB31620829F5A1A93755C32817"
+  },
+  "default_bgm": {
+    "name": "洪荒之力",
+    "file": "assets/audio/default-bgm-honghuangzhili.m4a",
+    "source_note": "Extracted audio-only copy from D:\\6.AI\\自媒体\\背景音乐_洪荒之力.MOV",
+    "duration_seconds": 82.96,
+    "codec": "aac",
+    "sample_rate_hz": 44100,
+    "channels": 2,
+    "sha256": "D0636D947141DF0252A5CFC048738ADBDAB72C09E398AD2896568A4371DFA25F",
+    "mix": {
+      "volume": 0.10,
+      "fade_in_seconds": 1,
+      "fade_out_seconds": 2,
+      "sidechaincompress": "threshold=0.018:ratio=8:attack=20:release=320:makeup=1"
+    }
+  }
+}

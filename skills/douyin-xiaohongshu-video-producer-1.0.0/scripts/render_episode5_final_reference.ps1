@@ -11,7 +11,46 @@ Add-Type -AssemblyName System.Drawing
 
 $episode = 'D:\6.AI\自媒体\AI工具第5期'
 $srcVideo = Join-Path $episode '6月28日.mp4'
-$bgmFile = 'D:\6.AI\自媒体\背景音乐_世界杯.MOV'
+
+function Resolve-FirstExistingPath {
+  param([string[]]$Candidates)
+  foreach ($candidate in $Candidates) {
+    if (-not [string]::IsNullOrWhiteSpace($candidate) -and (Test-Path -LiteralPath $candidate)) {
+      return (Resolve-Path -LiteralPath $candidate).Path
+    }
+  }
+  throw "None of the candidate paths exist: $($Candidates -join '; ')"
+}
+
+function Get-PackagedDefaultBgmCandidates {
+  $candidates = New-Object 'System.Collections.Generic.List[string]'
+  $skillName = 'douyin-xiaohongshu-video-producer-1.0.0'
+  $assetRel = 'assets\audio\default-bgm-honghuangzhili.m4a'
+
+  # Works when this reference script is executed from the skill's scripts folder.
+  $candidates.Add((Join-Path (Split-Path -Parent $PSScriptRoot) $assetRel)) | Out-Null
+
+  # Works after the skill is installed on another computer.
+  if ($env:CODEX_HOME) {
+    $candidates.Add((Join-Path $env:CODEX_HOME ("skills\$skillName\$assetRel"))) | Out-Null
+  }
+  if ($env:USERPROFILE) {
+    $candidates.Add((Join-Path $env:USERPROFILE (".codex\skills\$skillName\$assetRel"))) | Out-Null
+  }
+
+  # Legacy local fallback for this workstation.
+  $candidates.Add('D:\6.AI\自媒体\背景音乐_洪荒之力.MOV') | Out-Null
+  return @($candidates.ToArray())
+}
+
+$episodeBgmOverride = 'D:\6.AI\自媒体\背景音乐_世界杯.MOV'
+$bgmFile = if (Test-Path -LiteralPath $episodeBgmOverride) {
+  (Resolve-Path -LiteralPath $episodeBgmOverride).Path
+} else {
+  Resolve-FirstExistingPath -Candidates (Get-PackagedDefaultBgmCandidates)
+}
+$voiceId = 'zh-CN-YunxiNeural'
+$voiceSampleRel = 'assets/audio/voice-yunxi-sample.webm'
 $ffmpeg = 'C:\Users\25506\AppData\Local\Temp\codex-audio-tools\node_modules\ffmpeg-static\ffmpeg.exe'
 $node = 'D:\SoftWareInstall\node\node.exe'
 $ttsScript = 'C:\Users\25506\AppData\Local\Temp\codex-audio-tools\generate_ep5_yunxi.mjs'
@@ -432,7 +471,7 @@ Copy-Item -LiteralPath $tmpFinal -Destination (Join-Path $delivery 'xiaohongshu_
 Copy-Item -LiteralPath (Join-Path $episode 'subtitles.srt') -Destination (Join-Path $delivery 'subtitles.srt') -Force
 
 $voiceText = ($segments | ForEach-Object -Begin { $n = 1 } -Process { "$n. $([string](Get-PropValue -Object $_ -Name 'Voice'))"; $n++ }) -join "`r`n"
-$voiceText += "`r`n配音说明：当前成片使用 zh-CN-YunxiNeural 临时 TTS，按第4期口播配音风格重配；背景音乐使用用户提供的《背景音乐_世界杯.MOV》，低音量混入并做人声避让。"
+$voiceText += "`r`n配音说明：当前成片使用 $voiceId 临时 TTS，rate +0%、pitch +0Hz、volume +0%；音色样板参考 $voiceSampleRel；背景音乐使用《$(Split-Path -Leaf $bgmFile)》，低音量混入并做人声避让。"
 [System.IO.File]::WriteAllText((Join-Path $episode 'voiceover_script.txt'), $voiceText, $utf8Bom)
 Copy-Item -LiteralPath (Join-Path $episode 'voiceover_script.txt') -Destination (Join-Path $delivery 'voiceover_script.txt') -Force
 
@@ -445,7 +484,9 @@ $stats = [pscustomobject]@{
   revisionElapsedSeconds = [Math]::Round($elapsed.TotalSeconds, 2)
   durationSeconds = $totalDuration
   sha256 = $hash
-  voice = 'zh-CN-YunxiNeural'
+  voice = $voiceId
+  voiceSample = $voiceSampleRel
+  bgm = $bgmFile
   screenStyle = 'Episode 4 tracking-box proof layout'
   tokenUsage = $null
   tokenUsageNote = 'Exact token usage is not exposed by the current runtime.'
@@ -455,7 +496,8 @@ $stats | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $statsPath -Encoding
 
 $readmePath = Join-Path $episode 'delivery_readme.md'
 $readme = Get-Content -LiteralPath $readmePath -Raw
-$readme = $readme -replace '背景音乐使用用户提供的 `背景音乐_世界杯.MOV`，低音量混入并做人声避让。', '背景音乐使用用户提供的 `背景音乐_世界杯.MOV`，低音量混入并做人声避让。录屏讲解阶段已按第4期双层录屏证明版式重做：上层完整上下文，下层当前模块放大。'
+$readmeBgmLine = '背景音乐使用 `' + (Split-Path -Leaf $bgmFile) + '`，低音量混入并做人声避让；默认音色为 `' + $voiceId + '`，音色样板为 `' + $voiceSampleRel + '`。录屏讲解阶段已按第4期双层录屏证明版式重做：上层完整上下文，下层当前模块放大。'
+$readme = $readme -replace '背景音乐使用用户提供的 `背景音乐_世界杯.MOV`，低音量混入并做人声避让。', $readmeBgmLine
 $readme = $readme -replace '抖音版和小红书版 SHA256 一致：`[A-F0-9]+`', ('抖音版和小红书版 SHA256 一致：`' + $hash + '`')
 $readme = $readme -replace '完成时间：.*', ('完成时间：' + $revEnd.ToString('yyyy-MM-dd HH:mm:ss zzz'))
 $readme = $readme -replace '整体耗时：.*', ('整体耗时：' + [Math]::Round($elapsed.TotalMinutes, 2) + ' 分钟（本次按第4期风格重做修订耗时）')

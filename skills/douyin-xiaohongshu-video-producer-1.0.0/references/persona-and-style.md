@@ -64,7 +64,8 @@
 ## Ending Rule
 
 - 默认不再使用 LIKE 结尾视频。
-- 默认加入背景音乐：用户提供背景音时优先使用用户文件；用户未提供时，默认使用 `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`。
-- 背景音乐必须低音量铺底，片头淡入、片尾淡出，并在人声段自动压低，保证口播清晰。
+- 默认配音：用户未提供人声时，使用 Microsoft Edge TTS `zh-CN-YunxiNeural`，参数固定为 rate `+0%`、pitch `+0Hz`、volume `+0%`；用 `assets/audio/voice-yunxi-sample.webm` 或 `assets/audio/voice-yunxi-sample.wav` 作为音色样板。
+- 默认加入背景音乐：用户提供背景音时优先使用用户文件；用户未提供时，默认使用 skill 内置 `assets/audio/default-bgm-honghuangzhili.m4a`；只有内置文件不可用时才回退到 `D:\6.AI\自媒体\背景音乐_洪荒之力.MOV`。
+- 背景音乐必须低音量铺底，片头淡入、片尾淡出，并在人声段自动压低，保证口播清晰；交付说明里记录 BGM 来源、SHA256、音色 ID 和混音参数。
 - 结尾使用黑底星火 CTA 图卡，文案只围绕本期内容和评论互动。
 - 删除与本期主内容无关的提示词、工具、项目或泛泛引导。
