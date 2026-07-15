@@ -1,0 +1,4 @@
+interface:
+  display_name: "Common Remotion Style Video"
+  short_description: "按抖音风格制作配音字幕视频和发布物料"
+  default_prompt: "Use $common-remotion-style-video to create a Douyin-style Remotion episode with Yunxi voiceover, subtitles, cover image, title, copy, and optional background music."
