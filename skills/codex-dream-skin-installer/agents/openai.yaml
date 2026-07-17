@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Dream Skin 组件主题"
+  short_description: "根据推荐样式或图片渲染可交互的 Codex 3D 组件主题"
+  default_prompt: "使用 $codex-dream-skin-installer 将参考图片渲染为保留原生交互的 Codex 组件级 3D 皮肤。"
