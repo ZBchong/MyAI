@@ -1,0 +1,4 @@
+interface:
+  display_name: "飞书 Codex 消息桥接"
+  short_description: "配置飞书消息到 Codex 的可靠双向桥接与常驻服务"
+  default_prompt: "使用 $feishu-codex-bridge 配置并验收我的飞书与 Codex 消息桥接。"

@@ -1,0 +1,13 @@
+{
+  "target_chat_ids": ["oc_REPLACE_WITH_TARGET_CHAT_ID"],
+  "allowed_sender_ids": ["ou_REPLACE_WITH_ALLOWED_SENDER_ID"],
+  "workspace": "/absolute/path/to/controlled/workspace",
+  "lark_cli": "/absolute/path/to/lark-cli",
+  "codex_cli": "/absolute/path/to/codex",
+  "ack_mode": "reaction",
+  "ack_reaction_emoji_type": "OnIt",
+  "codex_timeout_seconds": 1800,
+  "restart_delay_seconds": 3,
+  "codex_sandbox": "workspace-write",
+  "prompt_prefix": "你正在处理一条来自飞书的授权请求。完成请求后，用简洁中文给出可直接回复给用户的最终结论。不要向其他人发送消息，不要扩大请求范围。"
+}
